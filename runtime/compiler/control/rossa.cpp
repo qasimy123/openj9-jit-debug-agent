@@ -1814,9 +1814,12 @@ onLoadInternal(
 #endif
 
    jitConfig->runJitdump = runJitdump;
+   jitConfig->debugAgentGetAllJitMethods = debugAgentGetAllJitMethods;
+   jitConfig->debugAgentRevertToInterpreter = debugAgentRevertToInterpreter;
+   jitConfig->debugAgentRecompile = debugAgentRecompile;
+   jitConfig->debugAgentEnd = debugAgentEnd;
 
    jitConfig->debugAgentStart = debugAgentStart;
-   jitConfig->debugAgentGetAllJitMethods = debugAgentGetAllJitMethods;
    jitConfig->debugAgentRevertToInterpreter = debugAgentRevertToInterpreter;
    jitConfig->debugAgentRecompile = debugAgentRecompile;
    jitConfig->debugAgentEnd = debugAgentEnd;
