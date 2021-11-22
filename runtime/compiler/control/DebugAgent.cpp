@@ -303,12 +303,18 @@ debugAgentRecompile(J9VMThread* vmThread, J9JITExceptionTable *jitMethod, IDATA 
     {
         fileName = "badJitCompilationLog_opt_index_";
     }
-    char *lastOptIndexString = (char *)j9mem_allocate_memory(10, OMRMEM_CATEGORY_VM);
-    sprintf(lastOptIndexString, "%d", (int)lastOptIndex);
     char *log = ".log";
-    char *fileNameWithLastOptIndex = (char *)j9mem_allocate_memory(strlen(fileName) + strlen(lastOptIndexString) + strlen(log) + 1, OMRMEM_CATEGORY_VM);
-    sprintf(fileNameWithLastOptIndex, "%s%s%s", fileName, lastOptIndexString, log);
-            
+    // Get num digits in lastOptIndex
+    int numDigits = 1;
+    int temp = lastOptIndex;
+    while (temp >= 10)
+    {
+        temp /= 10;
+        numDigits++;
+    }
+    int maxSize = strlen(fileName) + strlen(log) + numDigits + 1;
+    char fileNameWithLastOptIndex[maxSize];
+    snprintf(fileNameWithLastOptIndex, maxSize, "%s%d%s", fileName, (int)lastOptIndex, log);
     TR::FILE *jitCompilationLog = enableTracing ? trfopen(fileNameWithLastOptIndex, "ab", false) : NULL;
     if (enableTracing)
     {
