@@ -303,18 +303,11 @@ debugAgentRecompile(J9VMThread* vmThread, J9JITExceptionTable *jitMethod, IDATA 
     {
         fileName = "badJitCompilationLog_opt_index_";
     }
-    char *log = ".log";
-    // Get num digits in lastOptIndex
-    int numDigits = 1;
-    int temp = lastOptIndex;
-    while (temp >= 10)
-    {
-        temp /= 10;
-        numDigits++;
-    }
-    int maxSize = strlen(fileName) + strlen(log) + numDigits + 1;
+    // Ref: https://github.com/eclipse-openj9/openj9-omr/blob/openj9/compiler/ras/Tree.cpp#L1168
+    int numDigits = ( lastOptIndex == 0 ? 1 : ((int) log10( (double)lastOptIndex ) + 1) );
+    int maxSize = strlen(fileName) + numDigits + 5;
     char fileNameWithLastOptIndex[maxSize];
-    snprintf(fileNameWithLastOptIndex, maxSize, "%s%d%s", fileName, (int)lastOptIndex, log);
+    snprintf(fileNameWithLastOptIndex, maxSize, "%s%d.log", fileName, (int)lastOptIndex);
     TR::FILE *jitCompilationLog = enableTracing ? trfopen(fileNameWithLastOptIndex, "ab", false) : NULL;
     if (enableTracing)
     {
