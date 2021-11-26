@@ -70,8 +70,11 @@ public final class JITHelpers {
 		return helpers;
 	}
 
-	/*
-	 * Public methods to provide access to expected exception
+	/**
+	 * Public method to set the expected exception for the current thread.
+	 * Initializes the exceptionMap if necessary.
+	 * 
+	 * @param expectedException The class of the expected exception.
 	 */
 
 	public static void setExpectedException(Class<? extends Throwable> expectedException) {
@@ -86,6 +89,13 @@ public final class JITHelpers {
 			exceptionMap.put(vmThreadName, expectedException);
 		}
 	}
+
+	/**
+	 * Public method to get the expected exception for the current thread.
+	 * 
+	 * @return The class of the expected exception.
+	 */
+
 	public static Class<? extends Throwable> getExpectedException() {
 		Thread currentThread = Thread.currentThread();
 		if(exceptionMap == null) {
@@ -94,20 +104,13 @@ public final class JITHelpers {
 		return exceptionMap.get(currentThread.getName());
 	}
 
-	/*
-	 * Public methods to instantiate and destroy exceptionMap
+	/**
+	 * Synchronized method to instantiate an exceptionMap if it does not exist
 	 */
 
 	public synchronized static void initExceptionMap() {
 		if (exceptionMap == null) {
 			exceptionMap = new java.util.concurrent.ConcurrentHashMap<String, Class<? extends Throwable>>();
-		}
-	}
-
-	public static void destroyExceptionMap() {
-		if (exceptionMap != null) {
-			exceptionMap.clear();
-			exceptionMap = null;
 		}
 	}
 
@@ -1222,6 +1225,16 @@ public final class JITHelpers {
 
 	private native static final void debugAgentRun(MethodAccessor ma, Object obj, Object[] args);
 
+	/**
+	 * Invokes the method on the object with the given MethodAccessor and arguments.
+	 * If the method throws an exception, it is caught and if the exception is unexpected,
+	 * the debug agent triggered.
+	 * 
+	 * @param ma the method to run the debug agent on.
+	 * @param obj the underlying object.
+	 * @param args the arguments for the method
+	 * @return the return value of the method
+	 */
 	public static Object invoke(MethodAccessor ma, Object obj, Object[] args) throws InvocationTargetException {
 		try {
 			return ma.invoke(obj, args);
